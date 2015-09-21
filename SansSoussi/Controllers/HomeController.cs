@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Web.Configuration;
 using System.Web.Security;
 using System.Data;
+using System.Text;
 
 namespace SansSoussi.Controllers
 {
@@ -70,6 +71,11 @@ namespace SansSoussi.Controllers
                 {
                     try
                     {
+                        // Retrait des caractéres parasites (Double vérif avec ValidateInput)
+                        comment = RemoveTroublesCharacters(comment);
+                        if (comment.Length < 1)
+                            throw new MyException("Votre message est vide");
+
                         //add new comment to db
                         //clean the string and prepare request must be good 
                         SqlCommand cmd = new SqlCommand(
@@ -95,12 +101,16 @@ namespace SansSoussi.Controllers
                 }
                 else
                 {
-                    throw new Exception("Vous devez vous connecter");
+                    throw new MyException("Vous devez vous connecter");
                 }
             }
-            catch (Exception ex)
+            catch (MyException ex)
             {
                 status = ex.Message;
+            }
+            catch (Exception ex) //Récupération des erreurs (SQL & autres) -> ne pas afficher les informations
+            {
+                status = "Erreur durant l'envoie de votre message";
             }
             finally
             {
@@ -180,6 +190,44 @@ namespace SansSoussi.Controllers
         public ActionResult About()
         {
             return View();
+        }
+
+        // Résumé :
+        //     Retire les caractères pouvant causser des soucis du la chaine de caractères
+        //
+        // Paramètres :
+        //   inputString:
+        //     Chaine à traiter
+        public static string RemoveTroublesCharacters(string inputString)
+        {
+            if (inputString == null) return null;
+
+            string WhiteListCaractere = "abcdefghijklmnopqrstuvwxyz0123456789.!:?,'";
+
+            StringBuilder outString = new StringBuilder();
+            char caract;
+
+            for (int i = 0; i < inputString.Length; i++)
+            {
+                caract = inputString[i];
+
+                // 5 pour StringComparison.OrdinalIgnoreCase
+                if (WhiteListCaractere.IndexOf(caract, 5) != -1)
+                    outString.Append(caract);
+            }
+            return outString.ToString();
+        }
+
+        private class MyException : Exception
+        {
+            public MyException()
+            { }
+
+            public MyException(string message) : base(message)
+            { }
+
+            public MyException(string message, Exception innerException) : base(message, innerException)
+            { }
         }
     }
 }
