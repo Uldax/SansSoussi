@@ -130,8 +130,16 @@ namespace SansSoussi.Controllers
             {
                 if (!string.IsNullOrEmpty(searchData))
                 {
-                    SqlCommand cmd = new SqlCommand("Select Comment from Comments where UserId = '" + user.ProviderUserKey + "' and Comment like '%" + searchData + "%'", _dbConnection);
+                    SqlCommand cmd = new SqlCommand("Select Comment from Comments where UserId = @user_id and Comment like '%' + @search_data + '%'", _dbConnection);
+
+                    cmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.UniqueIdentifier));
+                    cmd.Parameters.Add(new SqlParameter("@search_data", SqlDbType.VarChar, 256));
+
+                    cmd.Parameters["@user_id"].Value = user.ProviderUserKey;
+                    cmd.Parameters["@search_data"].Value = searchData;
+
                     _dbConnection.Open();
+                    cmd.Prepare();
                     SqlDataReader rd = cmd.ExecuteReader();
 
 
