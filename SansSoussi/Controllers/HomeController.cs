@@ -192,6 +192,11 @@ namespace SansSoussi.Controllers
             return View();
         }
 
+        public ActionResult Error()
+        {
+            return View();
+        }
+
         // Résumé :
         //     Retire les caractères pouvant causser des soucis du la chaine de caractères
         //
