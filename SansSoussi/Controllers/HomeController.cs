@@ -199,6 +199,11 @@ namespace SansSoussi.Controllers
             return View();
         }
 
+        public ActionResult JsError()
+        {
+            return Json("Erreur durant l'envoie de votre message");
+        }
+
         // Résumé :
         //     Retire les caractères pouvant causser des soucis du la chaine de caractères
         //
