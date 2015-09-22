@@ -60,6 +60,8 @@ namespace SansSoussi.Controllers
         [HttpPost]
         //Do not allow html content
         [ValidateInput(true)]
+        //XSRF protection
+        [ValidateAntiForgeryToken]
         public ActionResult Comments(string comment)
         {
             string status = "success";
@@ -70,7 +72,7 @@ namespace SansSoussi.Controllers
                 if (user != null)
                 {
                     // Retrait des caractéres parasites (Double vérif avec ValidateInput)
-                    comment = RemoveTroublesCharacters(comment);
+                    //comment = RemoveTroublesCharacters(comment);
                     if (comment.Length < 1)
                         throw new MyException("Votre message est vide");
 
@@ -156,6 +158,7 @@ namespace SansSoussi.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Emails(object form)
         {
             List<string> searchResults = new List<string>();

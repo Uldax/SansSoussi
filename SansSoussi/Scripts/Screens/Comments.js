@@ -6,10 +6,14 @@ function AddComments() {
         $("#NewCommentsBtn").val("Ajouter");
     }
     else {
+        var token = $("input[name=__RequestVerificationToken]").val();
         $.ajax({
             url: ResolveUrl("~/home/comments"),
             type: "POST",
-            data: { comment: $("#NewComment").val() },
+            data: {
+                __RequestVerificationToken: token,
+                comment: $("#NewComment").val(),              
+            },
             success: function (status) {
                 if (status != "success") {
                     alert(status);

@@ -9,7 +9,6 @@
     <script src="@Url.Content("~/Scripts/Screens/Comments.js")" type="text/javascript"></script>
 }
 
-@Html.AntiForgeryToken()
 
 <h2>Comments</h2>
 
@@ -22,6 +21,7 @@
 }
 </div>
 
-<textarea rows="2" cols="20" id="NewComment" style="display:none;" ></textarea>
 
+@Html.AntiForgeryToken()
+<textarea rows="2" cols="20" id="NewComment" style="display:none;" ></textarea>
 <input id="NewCommentsBtn" onclick="AddComments();" value="Nouveau commentaire" type="button" />
