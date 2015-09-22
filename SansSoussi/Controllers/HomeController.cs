@@ -69,34 +69,28 @@ namespace SansSoussi.Controllers
                 MembershipUser user = Membership.Provider.GetUser(HttpContext.User.Identity.Name, true);
                 if (user != null)
                 {
-                    try
-                    {
-                        // Retrait des caractéres parasites (Double vérif avec ValidateInput)
-                        comment = RemoveTroublesCharacters(comment);
-                        if (comment.Length < 1)
-                            throw new MyException("Votre message est vide");
+                    // Retrait des caractéres parasites (Double vérif avec ValidateInput)
+                    comment = RemoveTroublesCharacters(comment);
+                    if (comment.Length < 1)
+                        throw new MyException("Votre message est vide");
 
-                        //add new comment to db
-                        //clean the string and prepare request must be good 
-                        SqlCommand cmd = new SqlCommand(
-                        "Insert into [Comments] ([UserId], [CommentId], [Comment]) Values (@user_id, @comment_id, @comment)", _dbConnection);
+                    //add new comment to db
+                    //clean the string and prepare request must be good 
+                    SqlCommand cmd = new SqlCommand(
+                    "Insert into [Comments] ([UserId], [CommentId], [Comment]) Values (@user_id, @comment_id, @comment)", _dbConnection);
 
-                        cmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.UniqueIdentifier));
-                        cmd.Parameters.Add(new SqlParameter("@comment_id", SqlDbType.UniqueIdentifier));
-                        //La méthode SqlCommand.Prepare requiert que tous les paramètres de longueur variable aient une valeur Size explicitement définie différente de zéro
-                        cmd.Parameters.Add(new SqlParameter("@comment", SqlDbType.VarChar, 256));
+                    cmd.Parameters.Add(new SqlParameter("@user_id", SqlDbType.UniqueIdentifier));
+                    cmd.Parameters.Add(new SqlParameter("@comment_id", SqlDbType.UniqueIdentifier));
+                    //La méthode SqlCommand.Prepare requiert que tous les paramètres de longueur variable aient une valeur Size explicitement définie différente de zéro
+                    cmd.Parameters.Add(new SqlParameter("@comment", SqlDbType.VarChar, 256));
 
-                        cmd.Parameters["@user_id"].Value = user.ProviderUserKey;
-                        cmd.Parameters["@comment_id"].Value = Guid.NewGuid();
-                        cmd.Parameters["@comment"].Value = comment;
+                    cmd.Parameters["@user_id"].Value = user.ProviderUserKey;
+                    cmd.Parameters["@comment_id"].Value = Guid.NewGuid();
+                    cmd.Parameters["@comment"].Value = comment;
 
-                        _dbConnection.Open();
-                        cmd.Prepare();
-                        cmd.ExecuteNonQuery();
-                    } catch(Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    _dbConnection.Open();
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
               
                 }
                 else
